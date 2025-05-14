@@ -45,36 +45,40 @@ resource "aws_instance" "web_server" {
   }
 
   user_data = <<-EOF
-    #!/bin/bash
-    set -e
+#!/bin/bash
+set -e
 
-    sudo apt-get update
-    sudo apt-get install ca-certificates curl
-    sudo install -m 0755 -d /etc/apt/keyrings
-    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-    sudo chmod a+r /etc/apt/keyrings/docker.asc
-    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-    sudo apt-get update
-    sudo apt-get install -y ca-certificates curl gnupg lsb-release
-    sudo mkdir -p /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
-    sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    echo \
-    "deb [arch=$(dpkg --print-architecture) \
-    signed-by=/etc/apt/keyrings/docker.gpg] \
-    https://download.docker.com/linux/ubuntu \
-    $(lsb_release -cs) stable" | \
-    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    sudo apt-get update
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io \
-    docker-buildx-plugin docker-compose-plugin
-    git clone https://github.com/tmips/docker-lab.git
-    cd docker-lab
-    sudo usermod -aG docker $USER
-    newgrp docker
-    docker build -t lab4 .
-    docker run -d -p 80:80 --name lab4_cont lab4
-    docker run -d   --name watchtower   --restart always   -v /var/run/docker.sock:/var/run/docker.sock   containrrr/watchtower   --interval 3
-   
-  EOF
+# Оновлення системи
+apt-get update -y
+apt-get install -y ca-certificates curl gnupg lsb-release git
+
+# Налаштування репозиторію Docker
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+  gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+  > /etc/apt/sources.list.d/docker.list
+
+apt-get update -y
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Клонування репозиторію
+git clone https://github.com/tmips/docker-lab.git /home/ubuntu/docker-lab
+cd /home/ubuntu/docker-lab
+
+# Побудова та запуск контейнера
+docker build -t lab4 .
+docker run -d -p 80:80 --name lab4_cont lab4
+
+# Запуск Watchtower
+docker run -d \
+  --name watchtower \
+  --restart always \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  containrrr/watchtower \
+  --interval 3
+EOF
 }
