@@ -70,8 +70,7 @@ git clone https://github.com/tmips/docker-lab.git /home/ubuntu/docker-lab
 cd /home/ubuntu/docker-lab
 
 # Побудова та запуск контейнера
-docker rm -f lab4_cont || true
-docker run -d -p 80:80 --name lab4_cont lab4
+docker start lab4_cont
 
 # Запуск Watchtower
 docker run -d \
