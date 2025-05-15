@@ -52,7 +52,7 @@ set -e
 apt-get update -y
 apt-get install -y ca-certificates curl gnupg lsb-release git
 
-# Налаштування репозиторію Docker
+# Встановлення Docker
 install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
   gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -65,12 +65,22 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 apt-get update -y
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+# Додавання користувача ubuntu до групи docker
+usermod -aG docker ubuntu
+
 # Клонування репозиторію
 git clone https://github.com/tmips/docker-lab.git /home/ubuntu/docker-lab
-cd docker-lab
+cd /home/ubuntu/docker-lab
 
-# Побудова та запуск контейнера
-docker start lab4_cont
+# Побудова Docker-образу
+docker build -t lab4 .
+
+# Запуск контейнера з автостартом
+docker run -d \
+  --name lab4_cont \
+  --restart unless-stopped \
+  -p 80:80 \
+  lab4
 
 # Запуск Watchtower
 docker run -d \
