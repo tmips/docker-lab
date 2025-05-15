@@ -67,7 +67,7 @@ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 
 # Клонування репозиторію
 git clone https://github.com/tmips/docker-lab.git /home/ubuntu/docker-lab
-cd /home/ubuntu/docker-lab
+cd docker-lab
 
 # Побудова та запуск контейнера
 docker start lab4_cont
