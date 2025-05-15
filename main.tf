@@ -68,10 +68,7 @@ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 # Додавання користувача ubuntu до групи docker
 usermod -aG docker ubuntu
 
-# Клонування репозиторію
-git clone https://github.com/tmips/docker-lab.git /home/ubuntu/docker-lab
-cd /home/ubuntu/docker-lab
-
+# Зупинка і видалення старого контейнера, якщо він є
 docker stop lab4_cont || true
 docker rm lab4_cont || true
 
@@ -97,7 +94,7 @@ docker run -d \
   --restart always \
   -v /var/run/docker.sock:/var/run/docker.sock \
   containrrr/watchtower \
-  --interval 30 \
+  --interval 60 \
   lab4_cont
 EOF
 }
