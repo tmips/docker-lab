@@ -46,8 +46,8 @@ resource "aws_instance" "web_server" {
 
   user_data = <<-EOF
   #!/bin/bash
-  apt-get update -y
-  apt-get install -y docker.io
+  apt update
+  apt install -y docker.io
   systemctl start docker
   systemctl enable docker
 
