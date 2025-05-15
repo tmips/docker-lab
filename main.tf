@@ -64,3 +64,11 @@ resource "aws_instance" "web_server" {
     --interval 30
   EOF
 }
+
+terraform {
+  backend "s3" {
+    bucket = "bucketforlab6"
+    key    = "terraform-lab6/state.tfstate"
+    region = "us-east-1"
+  }
+}
