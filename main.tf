@@ -45,36 +45,22 @@ resource "aws_instance" "web_server" {
   }
 
   user_data = <<-EOF
-#!/bin/bash
-apt-get update -y
-install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
-  gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-chmod a+r /etc/apt/keyrings/docker.gpg
-
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
-  > /etc/apt/sources.list.d/docker.list
-
-apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-
-usermod -aG docker ubuntu
-
-
-docker run -d \
+  #!/bin/bash
+  apt update
+  apt install -y docker.io
+  systemctl start docker
+  systemctl enable docker
+  docker run -d \
   --name lab4_cont \
   -p 80:80 \
   kkmm552/lab4:latest
-
-docker run -d \
+  docker run -d \
   --name watchtower \
   --restart always \
   -v /var/run/docker.sock:/var/run/docker.sock \
   containrrr/watchtower \
   --interval 30 \
-
-EOF
+  EOF
 }
 
 terraform {
