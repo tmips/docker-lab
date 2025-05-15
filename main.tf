@@ -46,13 +46,7 @@ resource "aws_instance" "web_server" {
 
   user_data = <<-EOF
 #!/bin/bash
-set -e
-
-# Оновлення системи
 apt-get update -y
-apt-get install -y ca-certificates curl gnupg lsb-release git
-
-# Встановлення Docker
 install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
   gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -62,45 +56,33 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
   https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
   > /etc/apt/sources.list.d/docker.list
 
-apt-get update -y
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-cd /home/ubuntu/docker-lab
 
 # Додавання користувача ubuntu до групи docker
 usermod -aG docker ubuntu
 
-# Зупинка і видалення старого контейнера, якщо він є
-docker stop lab4_cont || true
-docker rm lab4_cont || true
-
-# Видалення локального образу (якщо є)
-docker rmi lab4 || true
-
-# Отримання образу з DockerHub
-docker pull kkmm552/lab4:latest
 
 # Запуск контейнера з auto-restart
 docker run -d \
   --name lab4_cont \
-  --restart unless-stopped \
   -p 80:80 \
   kkmm552/lab4:latest
-
-# Запуск Watchtower для автоматичного оновлення при зміні образу
-docker stop watchtower || true
-docker rm watchtower || true
 
 docker run -d \
   --name watchtower \
   --restart always \
   -v /var/run/docker.sock:/var/run/docker.sock \
   containrrr/watchtower \
-  --interval 60 \
-  lab4_cont
+  --interval 30 \
 
-docker pull kkmm552/lab4:latest
-docker rm -f lab4_cont
-docker run -d -p 80:80 --name lab4_cont kkmm552/lab4:latest
 EOF
+}
+
+terraform {
+  backend "s3" {
+    bucket         = "bucketforlab6"      
+    key            = "terraform-lab6/state.tfstate"
+    region         = "us-east-1"
+  }
 }
