@@ -46,20 +46,22 @@ resource "aws_instance" "web_server" {
 
   user_data = <<-EOF
   #!/bin/bash
-  apt update
-  apt install -y docker.io
+  apt-get update -y
+  apt-get install -y docker.io
   systemctl start docker
   systemctl enable docker
+
   docker run -d \
-  --name lab4_cont \
-  -p 80:80 \
-  kkmm552/lab4:latest
+    --name lab4_cont \
+    -p 80:80 \
+    kkmm552/lab4:latest
+
   docker run -d \
-  --name watchtower \
-  --restart always \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  containrrr/watchtower \
-  --interval 30 \
+    --name watchtower \
+    --restart always \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    containrrr/watchtower \
+    --interval 30
   EOF
 }
 
