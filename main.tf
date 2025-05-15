@@ -72,22 +72,32 @@ usermod -aG docker ubuntu
 git clone https://github.com/tmips/docker-lab.git /home/ubuntu/docker-lab
 cd /home/ubuntu/docker-lab
 
-# Побудова Docker-образу
-docker build -t lab4 .
+docker stop lab4_cont || true
+docker rm lab4_cont || true
 
-# Запуск контейнера з автостартом
+# Видалення локального образу (якщо є)
+docker rmi lab4 || true
+
+# Отримання образу з DockerHub
+docker pull kkmm552/lab4:latest
+
+# Запуск контейнера з auto-restart
 docker run -d \
   --name lab4_cont \
   --restart unless-stopped \
   -p 80:80 \
-  lab4
+  kkmm552/lab4:latest
 
-# Запуск Watchtower
+# Запуск Watchtower для автоматичного оновлення при зміні образу
+docker stop watchtower || true
+docker rm watchtower || true
+
 docker run -d \
   --name watchtower \
   --restart always \
   -v /var/run/docker.sock:/var/run/docker.sock \
   containrrr/watchtower \
-  --interval 3
+  --interval 30 \
+  lab4_cont
 EOF
 }
