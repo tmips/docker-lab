@@ -79,7 +79,7 @@ docker rmi lab4 || true
 docker pull kkmm552/lab4:latest
 
 # Запуск контейнера з auto-restart
-docker run -d \
+docker run --pull always -d \
   --name lab4_cont \
   --restart unless-stopped \
   -p 80:80 \
