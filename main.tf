@@ -59,7 +59,6 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 
-# Додавання користувача ubuntu до групи docker
 usermod -aG docker ubuntu
 
 
