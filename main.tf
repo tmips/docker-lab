@@ -63,7 +63,6 @@ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 usermod -aG docker ubuntu
 
 
-# Запуск контейнера з auto-restart
 docker run -d \
   --name lab4_cont \
   -p 80:80 \
