@@ -65,6 +65,8 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 apt-get update -y
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+cd /home/ubuntu/docker-lab
+
 # Додавання користувача ubuntu до групи docker
 usermod -aG docker ubuntu
 
@@ -79,7 +81,7 @@ docker rmi lab4 || true
 docker pull kkmm552/lab4:latest
 
 # Запуск контейнера з auto-restart
-docker run --pull always -d \
+docker run -d \
   --name lab4_cont \
   --restart unless-stopped \
   -p 80:80 \
