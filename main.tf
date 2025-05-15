@@ -98,5 +98,9 @@ docker run -d \
   containrrr/watchtower \
   --interval 60 \
   lab4_cont
+
+docker pull kkmm552/lab4:latest
+docker rm -f lab4_cont
+docker run -d -p 80:80 --name lab4_cont kkmm552/lab4:latest
 EOF
 }
